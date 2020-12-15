@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import QuizView, QuizDetailView
+from .views import QuizzesView, QuizView, AnswerView
 
 app_name = 'questie'
 
 urlpatterns = [
-    path('', QuizView.as_view()),
-    path('<int:pk>/', QuizDetailView.as_view())
+    path('', QuizzesView.as_view()),
+    path('<uuid:pk>/', QuizView.as_view()),
+    path('<uuid:pk>/answer/', AnswerView.as_view())
 ]

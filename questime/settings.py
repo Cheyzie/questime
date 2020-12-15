@@ -25,10 +25,13 @@ SECRET_KEY = 'uln%52bsr9mms+r@&v0)yt2(9i*pgspkqtbnf^bq=!zptbx8d6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['134.249.181.40',]
 
 
 # Application definition
+CORS_ALLOWED_ORIGINS = [
+]
+CORS_ALLOW_ALL_ORIGINS = True
 
 INSTALLED_APPS = [
     'questie.apps.QuestieConfig',
@@ -39,9 +42,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
