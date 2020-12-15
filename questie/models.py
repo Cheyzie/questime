@@ -32,3 +32,6 @@ class Dude(models.Model):
     quiz_id = models.IntegerField('ID of Quiz',editable= False)
     rating = models.FloatField('Успешность чувака')
     pass_date = models.DateTimeField('Дата прохождения',auto_now_add= True)
+
+    def __str__(self):
+        return self.name
