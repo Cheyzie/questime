@@ -15,8 +15,18 @@ class Question(models.Model):
     quiz = models.ForeignKey(Quiz,on_delete=models.CASCADE)
     wording = models.CharField('Формулировка вопроса',max_length=100)
     text = models.CharField('Текст вопроса',max_length=2500, blank=True)
-    image = models.CharField('Ссылка на картинку', max_length=200, blank=True)
+    image = models.CharField('Ссылка на картинку', max_length=250, blank=True)
     is_multiple_choice = models.BooleanField('Несколько ответов',default=False)
+
+    def check_answers(self, choices_id):
+        correct_choices = self.choice_set.filter(is_correct=True)
+        if len(choices_id) > 0:
+            if(self.is_multiple_choice):
+                return sum([len(correct_choices.filter(pk=choice_id)) for choice_id in choices_id])/len(correct_choices)
+            else:
+                if(len(correct_choices.filter(pk=choices_id[0]))>0):
+                    return 1
+        return 0
 
     def __str__(self):
         return self.wording
