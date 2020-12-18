@@ -22,20 +22,20 @@ class QuizzesView(APIView):
         received_quiz = request.data.get('quiz')
         received_questions = request.data.get('questions')
         quiz_serializer = QuizSerializer(data=received_quiz)
-        quiz_serializer.is_valid()
-        quiz_obj = quiz_serializer.save()
-        for received_question in received_questions:
-            is_valid_question = {'question':'','choices': [], }
-            question = received_question['question']
-            question['quiz_id'] = quiz_obj.id
-            question_serializer = QuestionSerializer(data=question)
-            question_serializer.is_valid()
-            question_obj = question_serializer.save()
-            for choice in received_question['choices']:
-                choice['question_id'] = question_obj.id
-                choice_serializer = ChoiceSerializer(data=choice)
-                choice_serializer.is_valid()
-                choice_serializer.save()
+        if quiz_serializer.is_valid():
+            quiz_obj = quiz_serializer.save()
+            for received_question in received_questions:
+                is_valid_question = {'question':'','choices': [], }
+                question = received_question['question']
+                question['quiz_id'] = quiz_obj.id
+                question_serializer = QuestionSerializer(data=question)
+                if question_serializer.is_valid():
+                    question_obj = question_serializer.save()
+                    for choice in received_question['choices']:
+                        choice['question_id'] = question_obj.id
+                        choice_serializer = ChoiceSerializer(data=choice)
+                        if choice_serializer.is_valid():
+                            choice_serializer.save()
 
         return Response({'action':'create quiz','received_quiz':received_quiz,'recived_questions':received_questions})
 

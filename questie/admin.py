@@ -6,8 +6,9 @@ class ChoiceInline(admin.TabularInline):
     extra = 3
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['quiz', 'wording', 'text', 'image', 'is_multiple_choice']
+    list_display = ['quiz', 'wording', 'is_multiple_choice']
     inlines = [ChoiceInline]
+    list_filter = ['quiz']
 
 
 
