@@ -37,7 +37,8 @@ class QuizzesView(APIView):
                         if choice_serializer.is_valid():
                             choice_serializer.save()
 
-        return Response({'action':'create quiz','received_quiz':received_quiz,'recived_questions':received_questions})
+            return Response({'action':'create quiz','received_quiz':received_quiz,'recived_questions':received_questions})
+        return Response({'message':'Шо за Саня долбить хуйові реквксти?'})
 
 class QuizView(APIView):
     def get(self,request,pk):
