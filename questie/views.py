@@ -10,8 +10,6 @@ from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer, D
 from .models import Quiz,Question,Choice,Dude
 
 # Create your views here.
-def index(request):
-    return HttpResponse("{'name':'Classtime','action':'Suck'}")
 
 class QuizzesView(APIView):
     def get(self, request):
@@ -70,25 +68,18 @@ class AnswerView(APIView):
             return Response(status=404)
 
         quiz_id = pk
+        quiz = Quiz.objects.get(pk=pk)
         correct_answers = 0
 
         for answer in answers:
             question_id = answer["question_id"]
             choices_id = answer["choices_id"]
             correct_answers += Question.objects.get(pk=question_id).check_answers(choices_id)
-            # correct_choices = Question.objects.get(pk=question_id).choice_set.filter(is_correct=True)
-            # if len(choices_id) > 0:
-            #     if(Question.objects.get(pk=question_id).is_multiple_choice):
-            #         for choice_id in choices_id:
-            #             correct_answers+=len(correct_choices.filter(pk=choice_id))/len(correct_choices)
-            #     else:
-            #         if(len(correct_choices.filter(pk=choices_id[0]))>0):
-            #             correct_answers+=1
         rating = correct_answers/len(Quiz.objects.get(pk=quiz_id).question_set.all())
         serializer = DudeSerializer(data={'name':dude_name, 'quiz_id':quiz_id, 'rating':rating})
         serializer.is_valid()
         serializer.save()
-        return Response({'name':dude_name, 'rating':rating})
+        return Response({'name':dude_name, 'rating':rating, 'quiz_id': quiz_id, 'quiz_name': quiz.quiz_name})
 
 
             
@@ -97,3 +88,12 @@ class AnswerView(APIView):
 
     
         
+
+            # correct_choices = Question.objects.get(pk=question_id).choice_set.filter(is_correct=True)
+            # if len(choices_id) > 0:
+            #     if(Question.objects.get(pk=question_id).is_multiple_choice):
+            #         for choice_id in choices_id:
+            #             correct_answers+=len(correct_choices.filter(pk=choice_id))/len(correct_choices)
+            #     else:
+            #         if(len(correct_choices.filter(pk=choices_id[0]))>0):
+            #             correct_answers+=1
