@@ -22,7 +22,7 @@ class Question(models.Model):
         correct_choices = self.choice_set.filter(is_correct=True)
         if len(choices_id) > 0:
             if(self.is_multiple_choice):
-                correct_answers = (2*sum([len(correct_choices.filter(pk=choice_id)) for choice_id in choices_id])-len(correct_choices))/len(correct_choices)
+                correct_answers = (2*sum([len(correct_choices.filter(pk=choice_id)) for choice_id in choices_id])-len(choices_id))/len(correct_choices)
                 return (correct_answers if correct_answers > 0 else 0)
             else:
                 if(len(correct_choices.filter(pk=choices_id[0]))>0):
