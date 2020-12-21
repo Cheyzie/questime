@@ -40,7 +40,7 @@ class QuizzesView(APIView):
 
 class QuizView(APIView):
     def get(self,request,pk):
-        quiz = get_object_or_404(Quiz,pk=pk)
+        quiz = Quiz.objects.get(pk=pk)
         quiz_serializer = QuizSerializer(quiz,many=False)
         questions = quiz.question_set.all()
         quiz_response = {'quiz':quiz_serializer.data,'questions':[]}

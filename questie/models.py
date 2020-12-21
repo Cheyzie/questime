@@ -12,7 +12,7 @@ class Quiz(models.Model):
 
 class Question(models.Model):
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4)
-    quiz = models.ForeignKey(Quiz,related_name='question',on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz,on_delete=models.CASCADE)
     wording = models.CharField('Формулировка вопроса',max_length=100)
     text = models.CharField('Текст вопроса',max_length=2500, blank=True)
     image = models.CharField('Ссылка на картинку', max_length=250, blank=True)
@@ -35,7 +35,7 @@ class Question(models.Model):
 
 class Choice(models.Model):
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4)
-    question = models.ForeignKey(Question, related_name='choice', on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     text = models.CharField('Текст ответа',max_length=100)
     is_correct = models.BooleanField('Верный ответ',default=False)
 
