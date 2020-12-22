@@ -46,7 +46,7 @@ class Dude(models.Model):
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4)
     name = models.CharField('Имя',max_length=50)
     quiz_id = models.UUIDField('ID of Quiz',editable= False)
-    rating = models.FloatField('Успешность чувака', editable=False)
+    rating = models.FloatField('Успешность Сани', editable=False)
     pass_date = models.DateTimeField('Дата прохождения',auto_now_add= True)
 
     def __str__(self):

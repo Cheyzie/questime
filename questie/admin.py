@@ -10,9 +10,12 @@ class QuestionAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline]
     list_filter = ['quiz']
 
+class DudeAdmin(admin.ModelAdmin):
+    list_display=['name', 'rating', 'pass_date']
+    list_filter = ['pass_date']
 
 
 
 admin.site.register(Quiz)
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(Dude)
+admin.site.register(Dude, DudeAdmin)
