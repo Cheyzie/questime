@@ -6,6 +6,11 @@ class QuizSerializer(serializers.Serializer):
     quiz_name = serializers.CharField(max_length=50)
     creation_date = serializers.DateTimeField(read_only=True)
     is_public = serializers.BooleanField(write_only=True)
+    questions_count = serializers.SerializerMethodField()
+
+    def get_questions_count(self, obj):
+        return obj.question_set.all().count()
+
     def create(self, validated_data):
         return Quiz.objects.create(**validated_data)
 

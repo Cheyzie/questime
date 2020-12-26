@@ -97,3 +97,4 @@ class AnswerView(APIView):
             #     else:
             #         if(len(correct_choices.filter(pk=choices_id[0]))>0):
             #             correct_answers+=1
+# let re = /^[0-z]{8}-[0-z]{4}-[0-z]{4}-[0-z]{4}-[0-z]{12}-$/
