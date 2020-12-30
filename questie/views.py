@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer, DudeSerializer
+from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer, DudeSerializer, QuizDetailSerializer
 
 
 from .models import Quiz,Question,Choice,Dude
@@ -36,21 +36,23 @@ class QuizzesView(APIView):
                             choice_serializer.save()
 
             return Response({'action':'create quiz','received_quiz':received_quiz,'recived_questions':received_questions})
-        return Response(status=404,data={'error_message':'Шо за Саня долбить хуйові реквксти?'})
+        return Response(status=404,data={'error_message':quiz_serializer.errors})
 
 class QuizView(APIView):
     def get(self,request,pk):
+        # quiz = Quiz.objects.get(pk=pk)
+        # quiz_serializer = QuizSerializer(quiz,many=False)
+        # questions = quiz.question_set.all()
+        # quiz_response = {'quiz':quiz_serializer.data,'questions':[]}
+        # for question in questions:
+        #     question_serializer = QuestionSerializer(question)
+        #     choices = question.choice_set.all()
+        #     choices_serializer = ChoiceSerializer(choices,many=True)
+        #     quiz_response['questions'].append({'question': question_serializer.data,
+        #     'choices':choices_serializer.data})
         quiz = Quiz.objects.get(pk=pk)
-        quiz_serializer = QuizSerializer(quiz,many=False)
-        questions = quiz.question_set.all()
-        quiz_response = {'quiz':quiz_serializer.data,'questions':[]}
-        for question in questions:
-            question_serializer = QuestionSerializer(question)
-            choices = question.choice_set.all()
-            choices_serializer = ChoiceSerializer(choices,many=True)
-            quiz_response['questions'].append({'question': question_serializer.data,
-            'choices':choices_serializer.data})
-        return Response(quiz_response)
+        quiz_serializer = QuizDetailSerializer(quiz,many=False)
+        return Response(quiz_serializer.data)
 
 class AnswerView(APIView):
     def get(self, request, pk):

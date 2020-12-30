@@ -14,6 +14,14 @@ class QuizSerializer(serializers.Serializer):
     def create(self, validated_data):
         return Quiz.objects.create(**validated_data)
 
+class ChoiceSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
+    question_id = serializers.UUIDField()
+    text = serializers.CharField(max_length=100)
+    is_correct = serializers.BooleanField(write_only=True,required=False)
+    def create(self, validated_data):
+        return Choice.objects.create(**validated_data)
+
 class QuestionSerializer(serializers.Serializer):
     id = serializers.UUIDField(read_only=True)
     quiz_id = serializers.UUIDField()
@@ -21,19 +29,24 @@ class QuestionSerializer(serializers.Serializer):
     text = serializers.CharField(max_length=2500,required=False)
     image = serializers.CharField(max_length=250,required=False)
     is_multiple_choice = serializers.BooleanField(required=False)
+    choices = ChoiceSerializer(many=True)
+    
+    # def get_choices(self, obj):
+    #     serializer = ChoiceSerializer(obj.choice_set.all(), many=True)
+    #     return serializer.data
     def create(self, validated_data):
         return Question.objects.create(**validated_data)
 
-
-class ChoiceSerializer(serializers.Serializer):
+class QuizDetailSerializer(serializers.Serializer):
     id = serializers.UUIDField(read_only=True)
-    question_id = serializers.UUIDField()
-    text = serializers.CharField(max_length=100)
-    is_correct = serializers.BooleanField(write_only=True,required=False)
-    def create(self, validated_data):
-        return Choice.objects.create(**validated_data)
-        
+    quiz_name = serializers.CharField(max_length=50)
+    creation_date = serializers.DateTimeField(read_only=True)
+    is_public = serializers.BooleanField(write_only=True)
+    questions = QuestionSerializer(many=True)
 
+    def create(self, validated_data):
+        return Quiz.objects.create(**validated_data)
+        
 class DudeSerializer(serializers.Serializer):
     id = serializers.UUIDField(read_only=True)
     name = serializers.CharField(max_length=50)
@@ -42,5 +55,4 @@ class DudeSerializer(serializers.Serializer):
     pass_date = serializers.DateTimeField(read_only=True)
     def create(self, validated_data):
         return Dude.objects.create(**validated_data)
-
 
