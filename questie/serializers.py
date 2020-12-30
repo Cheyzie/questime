@@ -18,7 +18,8 @@ class ChoiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Choice
-        fields = ['text', ]
+        fields = ['id', 'text', 'is_correct']
+        extra_kwargs = {'is_correct': {'write_only': True}}
 
 class QuestionSerializer(serializers.ModelSerializer):
    
@@ -26,7 +27,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ['wording', 'text', 'image', 'is_multiple_choice', 'choices']
+        fields = ['id','wording', 'text', 'image', 'is_multiple_choice', 'choices']
 
 class QuizDetailSerializer(serializers.ModelSerializer):
    

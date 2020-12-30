@@ -20,15 +20,19 @@ class QuizzesView(APIView):
         quiz_serializer = QuizDetailSerializer(data=received_quiz)
         if quiz_serializer.is_valid():
             quiz_obj = quiz_serializer.save()
-            return Response({'action':'create quiz','received_quiz':received_quiz,'quiz':quiz_serializer.data})
+            return Response({'action':'create quiz success','quiz_id':quiz_obj.id,})
         return Response(status=404,data={'error_message':quiz_serializer.errors})
-        
 
 class QuizView(APIView):
     def get(self,request,pk):
         quiz = Quiz.objects.get(pk=pk)
         quiz_serializer = QuizDetailSerializer(quiz,many=False)
-        return Response({'quiz':quiz_serializer.data,})
+        quiz_data = quiz_serializer.data
+        questions_data = []
+        for question in quiz_data.pop('questions'):
+            choices = question.pop('choices')
+            questions_data.append({'question': question, 'choices': choices})
+        return Response({'quiz':quiz_data,'questions': questions_data})
 
 class AnswerView(APIView):
     def get(self, request, pk):
