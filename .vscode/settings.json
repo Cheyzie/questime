@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "/Users/cheyzie/Desktop/QuesTimE/qte_env/bin/activate"
+    "python.pythonPath": "c:\\Users\\PyroD\\Desktop\\QuesTimE\\qte_W_env\\Scripts\\python.exe",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }

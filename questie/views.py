@@ -6,7 +6,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer, DudeSerializer, QuizDetailSerializer
 
-
 from .models import Quiz,Question,Choice,Dude
 
 # Create your views here.
@@ -18,41 +17,18 @@ class QuizzesView(APIView):
         return Response({"quizzes":serializer.data})
     def post(self,request):
         received_quiz = request.data.get('quiz')
-        received_questions = request.data.get('questions')
-        quiz_serializer = QuizSerializer(data=received_quiz)
+        quiz_serializer = QuizDetailSerializer(data=received_quiz)
         if quiz_serializer.is_valid():
             quiz_obj = quiz_serializer.save()
-            for received_question in received_questions:
-                is_valid_question = {'question':'','choices': [], }
-                question = received_question['question']
-                question['quiz_id'] = quiz_obj.id
-                question_serializer = QuestionSerializer(data=question)
-                if question_serializer.is_valid():
-                    question_obj = question_serializer.save()
-                    for choice in received_question['choices']:
-                        choice['question_id'] = question_obj.id
-                        choice_serializer = ChoiceSerializer(data=choice)
-                        if choice_serializer.is_valid():
-                            choice_serializer.save()
-
-            return Response({'action':'create quiz','received_quiz':received_quiz,'recived_questions':received_questions})
+            return Response({'action':'create quiz','received_quiz':received_quiz,'quiz':quiz_serializer.data})
         return Response(status=404,data={'error_message':quiz_serializer.errors})
+        
 
 class QuizView(APIView):
     def get(self,request,pk):
-        # quiz = Quiz.objects.get(pk=pk)
-        # quiz_serializer = QuizSerializer(quiz,many=False)
-        # questions = quiz.question_set.all()
-        # quiz_response = {'quiz':quiz_serializer.data,'questions':[]}
-        # for question in questions:
-        #     question_serializer = QuestionSerializer(question)
-        #     choices = question.choice_set.all()
-        #     choices_serializer = ChoiceSerializer(choices,many=True)
-        #     quiz_response['questions'].append({'question': question_serializer.data,
-        #     'choices':choices_serializer.data})
         quiz = Quiz.objects.get(pk=pk)
         quiz_serializer = QuizDetailSerializer(quiz,many=False)
-        return Response(quiz_serializer.data)
+        return Response({'quiz':quiz_serializer.data,})
 
 class AnswerView(APIView):
     def get(self, request, pk):
@@ -77,26 +53,8 @@ class AnswerView(APIView):
             question_id = answer["question_id"]
             choices_id = answer["choices_id"]
             correct_answers += Question.objects.get(pk=question_id).check_answers(choices_id)
-        rating = correct_answers/len(Quiz.objects.get(pk=quiz_id).question_set.all())
+        rating = correct_answers/len(Quiz.objects.get(pk=quiz_id).questions.all())
         serializer = DudeSerializer(data={'name':dude_name, 'quiz_id':quiz_id, 'rating':rating})
         serializer.is_valid()
         serializer.save()
         return Response({'name':dude_name, 'rating':rating, 'quiz_id': quiz_id, 'quiz_name': quiz.quiz_name})
-
-
-            
-
-
-
-    
-        
-
-            # correct_choices = Question.objects.get(pk=question_id).choice_set.filter(is_correct=True)
-            # if len(choices_id) > 0:
-            #     if(Question.objects.get(pk=question_id).is_multiple_choice):
-            #         for choice_id in choices_id:
-            #             correct_answers+=len(correct_choices.filter(pk=choice_id))/len(correct_choices)
-            #     else:
-            #         if(len(correct_choices.filter(pk=choices_id[0]))>0):
-            #             correct_answers+=1
-# let re = /^[0-z]{8}-[0-z]{4}-[0-z]{4}-[0-z]{4}-[0-z]{12}-$/

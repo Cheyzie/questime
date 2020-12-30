@@ -9,43 +9,42 @@ class QuizSerializer(serializers.Serializer):
     questions_count = serializers.SerializerMethodField()
 
     def get_questions_count(self, obj):
-        return obj.question_set.all().count()
+        return obj.questions.all().count()
 
     def create(self, validated_data):
         return Quiz.objects.create(**validated_data)
 
 class ChoiceSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField(read_only=True)
-    question_id = serializers.UUIDField()
-    text = serializers.CharField(max_length=100)
-    is_correct = serializers.BooleanField(write_only=True,required=False)
-    def create(self, validated_data):
-        return Choice.objects.create(**validated_data)
 
-class QuestionSerializer(serializers.Serializer):
-    id = serializers.UUIDField(read_only=True)
-    quiz_id = serializers.UUIDField()
-    wording = serializers.CharField(max_length=100)
-    text = serializers.CharField(max_length=2500,required=False)
-    image = serializers.CharField(max_length=250,required=False)
-    is_multiple_choice = serializers.BooleanField(required=False)
+    class Meta:
+        model = Choice
+        fields = ['text', ]
+
+class QuestionSerializer(serializers.ModelSerializer):
+   
     choices = ChoiceSerializer(many=True)
-    
-    # def get_choices(self, obj):
-    #     serializer = ChoiceSerializer(obj.choice_set.all(), many=True)
-    #     return serializer.data
-    def create(self, validated_data):
-        return Question.objects.create(**validated_data)
 
-class QuizDetailSerializer(serializers.Serializer):
-    id = serializers.UUIDField(read_only=True)
-    quiz_name = serializers.CharField(max_length=50)
-    creation_date = serializers.DateTimeField(read_only=True)
-    is_public = serializers.BooleanField(write_only=True)
+    class Meta:
+        model = Question
+        fields = ['wording', 'text', 'image', 'is_multiple_choice', 'choices']
+
+class QuizDetailSerializer(serializers.ModelSerializer):
+   
     questions = QuestionSerializer(many=True)
 
+    class Meta:
+        model = Quiz
+        fields = ['id', 'quiz_name', 'creation_date', 'is_public','questions']
+
     def create(self, validated_data):
-        return Quiz.objects.create(**validated_data)
+        questions_data = validated_data.pop('questions')
+        quiz = Quiz.objects.create(**validated_data)
+        for question_data in questions_data:
+            choices_data = question_data.pop('choices')
+            question = Question.objects.create(quiz=quiz, **question_data)
+            for choice_data in choices_data:
+                Choice.objects.create(question=question,**choice_data)
+        return quiz
         
 class DudeSerializer(serializers.Serializer):
     id = serializers.UUIDField(read_only=True)
