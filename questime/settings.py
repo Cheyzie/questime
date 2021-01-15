@@ -17,6 +17,32 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'myformatter': {
+            'format': '{levelname} - {asctime} - {module} - {process:d} - {message}',
+            'style': '{'
+        },
+    },
+    'handlers': {
+        'fileLog':{
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'exceptions.log'),
+            'formatter': 'myformatter',
+        },
+    },
+    'loggers': {
+        'questie': {
+            'handlers': ['fileLog'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+    }
+}
+
 MEDIA_ROOT= os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = 'media/'
 # Quick-start development settings - unsuitable for production
@@ -26,7 +52,7 @@ MEDIA_URL = 'media/'
 SECRET_KEY = 'uln%52bsr9mms+r@&v0)yt2(9i*pgspkqtbnf^bq=!zptbx8d6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['134.249.181.40','localhost']
 
@@ -49,6 +75,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'questie.middleware.FirstMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -58,6 +85,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'questime.urls'

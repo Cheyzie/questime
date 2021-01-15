@@ -8,28 +8,26 @@ from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer, D
 import uuid, traceback
 from .models import Quiz, Question, Choice, Dude, Image
 
-import time
-
 # Create your views here.
 
 class QuizzesView(APIView):
     def get(self, request):
         quizzes = Quiz.objects.filter(is_public=True).order_by('creation_date')
         serializer = QuizSerializer(quizzes,many=True)
-        time.sleep(1)
         return Response({"quizzes":serializer.data})
 
     def post(self, request):
         try:
             received_quiz = request.data.get('quiz')
         except:
-            return Response(data={'error_message': 'Nu ty eblan?'},status=status.HTTP_418_IM_A_TEAPOT)
+            return Response(data={'message': 'invalid data'},status=status.HTTP_400_BAD_REQUEST)
         else:
             quiz_serializer = QuizDetailSerializer(data=received_quiz)
             if quiz_serializer.is_valid():
                 quiz_obj = quiz_serializer.save()
                 return Response({'action':'create quiz success','quiz_id':quiz_obj.id,})
             return Response(data={'error_message':quiz_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class QuizView(APIView):
 
@@ -90,6 +88,7 @@ class DudeView(APIView):
             return Response({'message': 'deleting success'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'invalid edit_key'}, status=status.HTTP_403_FORBIDDEN)
+
 
 class ResultsView(APIView):
     def get(self, request, pk):
@@ -175,6 +174,7 @@ class ImageView(APIView):
             return Response({'message': 'deleting success'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'invalid edit_key'}, status=status.HTTP_403_FORBIDDEN)
+
 
 # {"dude_id":"cdddc21b-7f7e-4e15-87ef-9169a921b37d","answers":[{"question_id":"4133c3ff-98d7-4ba1-b5c4-77ae49603f0d","choices_id":["7fc62f29-1914-48df-855b-736b04db098c"]},{"question_id":"71351197-1add-4f99-9dab-b06de1c76deb","choices_id":["1417aa78-9f12-4fa1-8ee0-6557352da053"]}]}
 # {"dude_id":"928cdff8-2542-45b5-bddc-c3574da82663","answers":[{"question_id":"c0a9fa29-1e0a-433d-9f54-090e8a98e765","choices_id":["1892bb83-41dd-424c-b4c2-dec920c0c0e9","8e305407-3dba-4794-93b8-3cfb9376957f"]},{"question_id":"391b2ca1-dcf3-4b45-81b4-84a9764cfb17","choices_id":["f2915eca-f49d-4aae-b348-e0380125d11b"]}]} 
