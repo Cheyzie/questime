@@ -16,9 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from questie import views
+from questime import settings
+from django.views.static import serve
 
 urlpatterns = [
     path('api/', include('questie.urls')),
+    path('media/images/<path>', serve, {'document_root': settings.MEDIA_ROOT+'/images'}),
     path('admin/', admin.site.urls),
-
 ]

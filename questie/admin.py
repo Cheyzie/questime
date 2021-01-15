@@ -1,6 +1,13 @@
 from django.contrib import admin
-from .models import Quiz, Question, Choice, Dude
+from .models import Quiz, Question, Choice, Dude, Image, Result
 # Register your models here.
+
+
+class ResultInline(admin.TabularInline):
+    model = Result
+    extra = 2
+
+
 class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 3
@@ -11,11 +18,11 @@ class QuestionAdmin(admin.ModelAdmin):
     list_filter = ['quiz']
 
 class DudeAdmin(admin.ModelAdmin):
-    list_display=['name', 'rating', 'pass_date']
-    list_filter = ['pass_date']
-
+    list_display=['name',]
+    inlines = [ResultInline]
 
 
 admin.site.register(Quiz)
+admin.site.register(Image)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Dude, DudeAdmin)
